@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity2DGridMapToolset.Util;
 using UnityEngine;
 
-namespace GridMapToolset2D.PathFinding {
+namespace GridMapToolset.PathFinding {
     public class PathFindingRequest {
         public readonly Vector2Int StartPos;
         public readonly Vector2Int EndPos;

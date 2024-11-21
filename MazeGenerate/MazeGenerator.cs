@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace GridMapToolset2D.MazeGenerate {
+namespace GridMapToolset.MazeGenerate {
     public class MazeGenerator {
 
         public bool[,] GenerateMaze(Vector2Int mazeSize, int seed, Vector2Int startPoint, Vector2Int endPoint) {

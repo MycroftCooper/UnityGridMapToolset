@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace GridMapToolset2D.PathFinding {
+namespace GridMapToolset.PathFinding {
     public class BFS : IPathFinderAlgorithm {
         public PathFinderAlgorithms Algorithm => PathFinderAlgorithms.BFS;
         public bool NeedBestSolution { get; set; }

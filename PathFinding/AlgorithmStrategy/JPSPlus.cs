@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using Unity2DGridMapToolset.Util;
 
-namespace GridMapToolset2D.PathFinding {
+namespace GridMapToolset.PathFinding {
     public class JPSPlus : IPathFinderAlgorithm {
         public PathFinderAlgorithms Algorithm => PathFinderAlgorithms.JPSPlus;
         public bool NeedBestSolution { get; set; }

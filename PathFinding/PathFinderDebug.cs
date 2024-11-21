@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
-using GridMapToolset2D.MazeGenerate;
+using GridMapToolset.MazeGenerate;
 using Unity2DGridMapToolset.Util;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
@@ -9,7 +9,7 @@ using Debug = UnityEngine.Debug;
 using Sirenix.OdinInspector;
 #endif
 
-namespace GridMapToolset2D.PathFinding {
+namespace GridMapToolset.PathFinding {
 #if UNITY_EDITOR
     public partial class PathFinder {
         public bool isDebug;

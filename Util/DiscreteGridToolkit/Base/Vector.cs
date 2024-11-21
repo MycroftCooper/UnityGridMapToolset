@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 namespace Unity2DGridMapToolset.Util {
-    public struct Vector2StructExtension {
+    public struct Vector2StructExtension
+    {
         public static readonly Vector2 UpLeft = new Vector2(-1,1);
         public static readonly Vector2 UpRight = new Vector2(1,1);
         public static readonly Vector2 DownRight = new Vector2(1,-1);
@@ -32,6 +33,18 @@ namespace Unity2DGridMapToolset.Util {
     
     public static class VectorExtension {
         #region 转换相关
+        public static Polar2 ToPolar2(this Vector2 v2) {
+            float length = v2.magnitude;
+            float azimuth = Vector2.SignedAngle(Vector2.right, v2);
+            return new Polar2(length, azimuth);
+        }
+        public static Polar3 ToPolar3(this Vector3 v3) {
+            float length = v3.magnitude;
+            float x = Mathf.Acos(v3.z / length);
+            float y = Mathf.Atan(v3.y / v3.x);
+            return new Polar3(length, new Vector2(x, y) / Mathf.Deg2Rad);
+        }
+
         public static Vector3Int ToVec3Int(this Vector3 v3) {
             return new Vector3Int((int)v3.x, (int)v3.y, (int)v3.z);
         }

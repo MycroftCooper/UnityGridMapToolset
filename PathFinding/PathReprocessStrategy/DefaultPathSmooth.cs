@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace GridMapToolset2D.PathFinding {
+namespace GridMapToolset.PathFinding {
     public class DefaultPathSmooth : IPathReprocess {
         // 时间复杂度：O(n * d^2)
         public PathReprocesses PathReprocess => PathReprocesses.Default;

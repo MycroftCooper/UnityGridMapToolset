@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace GridMapToolset2D.PathFinding {
+namespace GridMapToolset.PathFinding {
     public static class HeuristicFunctions {
         public class CommonHeuristicFunction : HeuristicFunctionBase {
             public CommonHeuristicFunction(HeuristicTypes types) {

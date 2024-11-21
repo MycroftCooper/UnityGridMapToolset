@@ -5,7 +5,7 @@ using Unity2DGridMapToolset.Util;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
-namespace GridMapToolset2D.PathFinding {
+namespace GridMapToolset.PathFinding {
     public partial class PathFinder : FrameTaskScheduler<PathFindingFrameTask> {
         #region 地图处理相关
         public bool canDiagonallyPassByObstacle;

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace GridMapToolset2D.PathFinding {
+namespace GridMapToolset.PathFinding {
 public class PathFinderMap {
         public readonly bool[,] PassableMap;
         public bool CanDiagonallyPassByObstacle;

@@ -1,11 +1,10 @@
-using MycroftToolkit.DiscreteGridToolkit;
-using MycroftToolkit.DiscreteGridToolkit.Square;
-using MycroftToolkit.QuickCode;
 using Sirenix.OdinInspector;
 using System.Collections.Generic;
+using GridMapToolset.PathFinding;
+using Unity2DGridMapToolset.Util;
 using UnityEngine;
 
-namespace MapSystem {
+namespace GridMapToolset.Map {
     public class RoomGrid : MonoBehaviour {
         #region 初始化相关
         public void Init(Vector2Int fullSize, Vector2Int baseSize) {
@@ -19,7 +18,8 @@ namespace MapSystem {
                     PassableMap[i, j] = true;
                 }
             }
-            gameObject.AddComponent<RoomPathFinding>().Init(this);
+            PathFinder = gameObject.AddComponent<PathFinder>();
+            PathFinder.SetPassableMap(PassableMap);
         }
         
         #endregion
@@ -29,8 +29,8 @@ namespace MapSystem {
         public string RoomName => gameObject.transform.parent.name;
         [ShowInInspector]
         public Vector3 CenterPos {
-            get => transform.position + FullSize.Vec3() / 2;
-            set => transform.position = value - FullSize.Vec3() / 2;
+            get => transform.position + FullSize.ToVec3() / 2;
+            set => transform.position = value - FullSize.ToVec3() / 2;
         }
 
         [ShowInInspector] public Vector2Int FullSize { get; protected set; }
@@ -46,7 +46,8 @@ namespace MapSystem {
         public PointSet ProhibitedZone;
         
         public bool[,] PassableMap { get; private set; }
-        
+        public PathFinder PathFinder { get; private set; }
+
         private void UpdateMapForChangedObject(IOccupiedRoomObject obj, bool isAdding) {
             var occupiedPositions = obj.GridData.GridRect;
             for (int x = occupiedPositions.xMin; x < occupiedPositions.xMax; x++) {
@@ -137,11 +138,11 @@ namespace MapSystem {
             return result;
         }
 
-        public Vector2Int GetRandomGridPosition(RGRandom random) {
-            return new Vector2Int(random.Range(0, BaseSize.x), random.Range(0, BaseSize.y));
+        public Vector2Int GetRandomGridPosition(QuickRandom random) {
+            return new Vector2Int(random.GetInt(0, BaseSize.x), random.GetInt(0, BaseSize.y));
         }
 
-        public (Vector2Int pos, bool isPlaceable) GetRandomPlaceableGridPosition(RGRandom random) {
+        public (Vector2Int pos, bool isPlaceable) GetRandomPlaceableGridPosition(QuickRandom random) {
             List<Vector2Int> placeablePositions = GetAllPlaceableGridPos();
             if (placeablePositions == null || placeablePositions.Count == 0) {
                 return (default, false);
@@ -190,7 +191,7 @@ namespace MapSystem {
             return placeablePositions;
         }
 
-        public void GetPlacementInfo(RoomObjectPlacementInfo targetObj, RGRandom random, bool isPassablePlaceable = false) {
+        public void GetPlacementInfo(RoomObjectPlacementInfo targetObj, QuickRandom random, bool isPassablePlaceable = false) {
             var canSetPosList = GetPlaceableGridPosList(targetObj, isPassablePlaceable);
             if (canSetPosList == null || canSetPosList.Count == 0) {
                 return;
@@ -200,8 +201,8 @@ namespace MapSystem {
             targetObj.SetPos(this, targetGridPos);
         }
 
-        public void GetPlacementInfos(List<RoomObjectPlacementInfo> targetObjs, RGRandom random, bool isPassablePlaceable = false) {
-            targetObjs = targetObjs.GetRandomList(random); // 随机化放置顺序
+        public void GetPlacementInfos(List<RoomObjectPlacementInfo> targetObjs, QuickRandom random, bool isPassablePlaceable = false) {
+            targetObjs.Shuffle(random); // 随机化放置顺序
             HashSet<Vector2Int> tempPlacementMap = new HashSet<Vector2Int>();
 
             foreach (var obj in targetObjs) {
@@ -254,16 +255,13 @@ namespace MapSystem {
             var layoutPos = GetObjectWorldLayoutPos(obj, lPos);
             if (obj.Go != null) {
                 obj.Go.transform.position = layoutPos;
-                if (LogUtil.IsShowLog) {
-                    Debug.Log($"物品{obj.Go.name}已被放入房间{RoomName}, 位置:{lPos}");
-                }
-
+                Debug.Log($"物品{obj.Go.name}已被放入房间{RoomName}, 位置:{lPos}");
             }
             obj.OnAddedToRoomGrid();
             return true;
         }
 
-        public bool AddObject(IOccupiedRoomObject obj, RGRandom random) {
+        public bool AddObject(IOccupiedRoomObject obj, QuickRandom random) {
             if (obj == null) {
                 Debug.LogError("目标物体为Null!");
                 return false;
@@ -287,9 +285,7 @@ namespace MapSystem {
             var layoutPos = GetObjectWorldLayoutPos(obj, lPos);
             obj.Go.transform.position = layoutPos;
             obj.OnAddedToRoomGrid();
-            if (LogUtil.IsShowLog) {
-                Debug.Log($"物品{obj.Go.name}已被放入房间{RoomName}, 位置:{lPos}");
-            }
+            Debug.Log($"物品{obj.Go.name}已被放入房间{RoomName}, 位置:{lPos}");
             return true;
         }
         
@@ -309,24 +305,11 @@ namespace MapSystem {
             obj.GridData.SetPos(Vector2Int.zero);
             
             obj.OnRemoveFormRoomGrid(this);
-            if (LogUtil.IsShowLog) {
-                Debug.Log($"物品{obj.Go.name}已被取出房间{RoomName}");
-            }
+            Debug.Log($"物品{obj.Go.name}已被取出房间{RoomName}");
         }
         #endregion
         
         #region 坐标转换
-        public Vector2Int GetPatternGridOffset() {
-            var room = transform.parent.GetComponent<RGRoomX>();
-            RoomPatternManager mgr = room.mapManagerLevel.RoomPatternMgr;
-            var pattern = mgr.GetRoomPattern(room);
-            if (pattern == null) {
-                return Vector2Int.zero;
-            }
-            Vector2Int offset = (room.Grid.BaseSize - pattern.patternSize) / 2;
-            return offset;
-        }
-        
         // 以下所有操作都是基于BaseSize,是房间内部可用空间的计算
         public Vector3 GetObjectLocalLayoutPos(IRoomObject obj, Vector2Int gridPos) {
             Vector2 basePos = GridPos2LocalPos(gridPos);
@@ -357,7 +340,7 @@ namespace MapSystem {
         }
         
         public Vector2Int WorldPos2GridPos(Vector3 pos) {
-            Vector2 logicPos = pos - transform.position - BaseRect.min.Vec3();
+            Vector2 logicPos = pos - transform.position - BaseRect.min.ToVec3();
             return new Vector2Int(Mathf.FloorToInt(logicPos.x), Mathf.FloorToInt(logicPos.y));
         }
 
@@ -383,11 +366,11 @@ namespace MapSystem {
         }
 
         public Vector3 GridPos2WorldPos(Vector2Int pos) {
-            return pos.Vec3() + transform.position + BaseRect.min.Vec3();
+            return pos.ToVec3() + transform.position + BaseRect.min.ToVec3();
         }
 
         public Vector3 GridPos2WorldPosWithOffset(Vector2Int pos, Vector3 offset) {
-            return pos.Vec3() + transform.position + BaseRect.min.Vec3() + offset;
+            return pos.ToVec3() + transform.position + BaseRect.min.ToVec3() + offset;
         }
 
         public Vector3 GridPos2LocalPos(Vector2Int pos) {
@@ -418,7 +401,8 @@ namespace MapSystem {
             if (!_showDebugGizmos) {
                 return;
             }
-            Vector2Int mapSize = ObjectMap.GetSize();
+
+            Vector2Int mapSize = new Vector2Int(ObjectMap.GetLength(0), ObjectMap.GetLength(1));
             for (int x = 0; x < mapSize.x; x++) {
                 for (int y = 0; y < mapSize.y; y++) {
                     var obj = ObjectMap[x, y];

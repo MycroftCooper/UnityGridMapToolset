@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace GridMapToolset2D.PathFinding {
+namespace GridMapToolset.PathFinding {
     public class Theta : IPathReprocess {
         // 时间复杂度：O(n * d)
         public PathReprocesses PathReprocess => PathReprocesses.Theta;

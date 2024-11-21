@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity2DGridMapToolset.Util;
 
-namespace GridMapToolset2D.PathFinding {
+namespace GridMapToolset.PathFinding {
     public class JPS : IPathFinderAlgorithm {
         public PathFinderAlgorithms Algorithm => PathFinderAlgorithms.JPS;
         public bool NeedBestSolution { get; set; }
