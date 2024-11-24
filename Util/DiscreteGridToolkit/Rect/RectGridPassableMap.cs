@@ -2,20 +2,22 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace GridMapToolset.PathFinding {
-public class PathFinderMap {
+namespace GridMapToolset.Util {
+public class RectGridPassableMap {
         public readonly bool[,] PassableMap;
         public bool CanDiagonallyPassByObstacle;
         public readonly int Width;
         public readonly int Height;
         public readonly Vector2Int Size;
+        public readonly int Area;
 
-        public PathFinderMap(bool[,] passableMap, bool canDiagonallyPassByObstacle = false) {
+        public RectGridPassableMap(bool[,] passableMap, bool canDiagonallyPassByObstacle = false) {
             PassableMap = passableMap;
             CanDiagonallyPassByObstacle = canDiagonallyPassByObstacle;
             Width = PassableMap.GetLength(0);
             Height = PassableMap.GetLength(1);
             Size = new Vector2Int(Width, Height);
+            Area = Width * Height;
         }
         
         public bool IsInBounds(int x, int y) => x >= 0 && x < Width && y >= 0 && y < Height;
@@ -92,8 +94,8 @@ public class PathFinderMap {
             return $"SourceMap> Width: {Width},Height: {Height},\tCanDiagonallyPassByObstacle: {CanDiagonallyPassByObstacle}";
         }
         
-        public enum Directions { Up, Down, Left, Right, LeftUp, RightUp, LeftDown, RightDown, Length }
-        public static readonly Dictionary<Directions, Vector2Int> Direction2VectorDict = new() {
+        public enum Directions { Up, Down, Left, Right, LeftUp, RightUp, LeftDown, RightDown }
+        public static readonly Dictionary<Directions, Vector2Int> Direction8Dict = new() {
             { Directions.Up, Vector2Int.up },
             { Directions.Down, Vector2Int.down },
             { Directions.Left, Vector2Int.left },
@@ -103,17 +105,13 @@ public class PathFinderMap {
             { Directions.LeftDown, new Vector2Int(-1, -1) },
             { Directions.RightDown, new Vector2Int(1, -1) }
         };
-        public static readonly Dictionary<Vector2Int, Directions> Vector2DirectionDict = new() {
-            { Vector2Int.up, Directions.Up },
-            { Vector2Int.down, Directions.Down },
-            { Vector2Int.left, Directions.Left },
-            { Vector2Int.right, Directions.Right },
-            { new Vector2Int(-1, 1), Directions.LeftUp },
-            { new Vector2Int(1, 1), Directions.RightUp },
-            { new Vector2Int(-1, -1), Directions.LeftDown },
-            { new Vector2Int(1, -1), Directions.RightDown }
+        public static readonly Dictionary<Directions, Vector2Int> Direction4Dict = new() {
+            { Directions.Up, Vector2Int.up },
+            { Directions.Down, Vector2Int.down },
+            { Directions.Left, Vector2Int.left },
+            { Directions.Right, Vector2Int.right },
         };
 
-        public static bool IsNeighbor(Vector2Int a, Vector2Int b) => Vector2DirectionDict.Keys.Any(dir => b == a + dir);
+        public static bool Is8Neighbor(Vector2Int a, Vector2Int b) => Direction8Dict.Values.Any(dir => b == a + dir);
     }
 }

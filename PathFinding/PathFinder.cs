@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GridMapToolset.Util;
 using Unity2DGridMapToolset.Util;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
@@ -9,10 +10,10 @@ namespace GridMapToolset.PathFinding {
     public partial class PathFinder : FrameTaskScheduler<PathFindingFrameTask> {
         #region 地图处理相关
         public bool canDiagonallyPassByObstacle;
-        private PathFinderMap _map;
+        private RectGridPassableMap _map;
         
         public void SetPassableMap(bool[,] map) {
-            _map = new PathFinderMap(map, canDiagonallyPassByObstacle);
+            _map = new RectGridPassableMap(map, canDiagonallyPassByObstacle);
             if(_algorithms.Count != 0) {
                 foreach (var a in _algorithms.Values) {
                     a.InitMap(_map);

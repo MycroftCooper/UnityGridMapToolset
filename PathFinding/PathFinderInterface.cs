@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using GridMapToolset.Util;
 using UnityEngine;
 
 namespace GridMapToolset.PathFinding {
@@ -15,7 +16,7 @@ namespace GridMapToolset.PathFinding {
         public PathFinderAlgorithms Algorithm { get; }
         public bool NeedBestSolution { get; set; }
         public HeuristicFunctionBase HeuristicFunction { get; set; }
-        public void InitMap(PathFinderMap map);
+        public void InitMap(RectGridPassableMap map);
         public void UpdateMap(RectInt bounds, bool passable);
         public List<Vector2Int> FindPath(Vector2Int start, Vector2Int target);
         public void OnDebugDrawGizmos(Vector3 originPos, Vector2Int targetPos);
@@ -33,9 +34,9 @@ namespace GridMapToolset.PathFinding {
         }
     }
     
-    public enum PathReprocesses {None, Default, Theta  }
+    public enum PathReprocesses {None, Default, Theta }
     public interface IPathReprocess {
-        public List<Vector2Int> ReprocessPath(List<Vector2Int> path, PathFinderMap map);
+        public List<Vector2Int> ReprocessPath(List<Vector2Int> path, RectGridPassableMap map);
         public PathReprocesses PathReprocess { get; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using GridMapToolset.Util;
 using UnityEngine;
 
 namespace GridMapToolset.PathFinding {
@@ -6,7 +7,7 @@ namespace GridMapToolset.PathFinding {
         // 时间复杂度：O(n * d)
         public PathReprocesses PathReprocess => PathReprocesses.Theta;
 
-        public List<Vector2Int> ReprocessPath(List<Vector2Int> path, PathFinderMap map) {
+        public List<Vector2Int> ReprocessPath(List<Vector2Int> path, RectGridPassableMap map) {
             if (path == null || path.Count < 2) return path;
 
             List<Vector2Int> optimizedPath = new List<Vector2Int>();

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using GridMapToolset.Util;
 using UnityEngine;
 using Unity2DGridMapToolset.Util;
 
@@ -8,12 +9,12 @@ namespace GridMapToolset.PathFinding {
         public PathFinderAlgorithms Algorithm => PathFinderAlgorithms.JPS;
         public bool NeedBestSolution { get; set; }
         public HeuristicFunctionBase HeuristicFunction { get; set; }
-        private PathFinderMap _map;
+        private RectGridPassableMap _map;
         private AStartPoint[,] _aStartMap;
         private BucketPriorityQueue<AStartPoint> _openList;
         private HashSet<AStartPoint> _closedList;
         
-        public void InitMap(PathFinderMap map) {
+        public void InitMap(RectGridPassableMap map) {
             _map = map;
             _aStartMap = new AStartPoint[_map.Width, _map.Height];
             for (int x = 0; x < _map.Width; x++) {
@@ -127,7 +128,7 @@ namespace GridMapToolset.PathFinding {
                 Vector2Int parentDir = new Vector2Int(Math.Sign(dx), Math.Sign(dy));
                 PruneDirections(point, parentDir);
             } else { // 起点，所有方向都考虑
-                _directions.AddRange(PathFinderMap.Vector2DirectionDict.Keys);
+                _directions.AddRange(RectGridPassableMap.Direction8Dict.Values);
             }
 
             foreach (var dir in _directions) {
@@ -169,7 +170,7 @@ namespace GridMapToolset.PathFinding {
                 if (!_map.CanDiagonallyPassByObstacle) { // 处理对角线穿透后的搜索
                     if ((!_map.IsPassable(x - dx, y + 1, false) && _map.IsPassable(x, y + 1, false)) || 
                         (!_map.IsPassable(x - dx, y - 1, false) && _map.IsPassable(x, y - 1, false))) {
-                        foreach (var dir in PathFinderMap.Vector2DirectionDict.Keys) {
+                        foreach (var dir in RectGridPassableMap.Direction8Dict.Values) {
                             if (dir == -parentDir || !_map.IsPassable(x + dir.x, y + dir.y)) {
                                 continue;
                             }
@@ -194,7 +195,7 @@ namespace GridMapToolset.PathFinding {
             if (!_map.CanDiagonallyPassByObstacle) { // 处理对角线穿透后的搜索
                 if ((!_map.IsPassable(x + 1, y - dy, false) && _map.IsPassable(x + 1, y, false)) ||
                     (!_map.IsPassable(x - 1, y - dy, false) && _map.IsPassable(x - 1, y, false))) {
-                    foreach (var dir in PathFinderMap.Vector2DirectionDict.Keys) {
+                    foreach (var dir in RectGridPassableMap.Direction8Dict.Values) {
                         if (dir == -parentDir || !_map.IsPassable(x + dir.x, y + dir.y)) {
                             continue;
                         }

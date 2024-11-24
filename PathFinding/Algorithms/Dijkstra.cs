@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using GridMapToolset.Util;
 using UnityEngine;
 using Unity2DGridMapToolset.Util;
 
@@ -8,13 +9,13 @@ namespace GridMapToolset.PathFinding {
         public PathFinderAlgorithms Algorithm => PathFinderAlgorithms.Dijkstra;
         public bool NeedBestSolution { get; set; }
         public HeuristicFunctionBase HeuristicFunction { get; set; }
-        private PathFinderMap _map;
+        private RectGridPassableMap _map;
         
         private DijkstraPoint[,] _dijkstraMap;
         private BucketPriorityQueue<DijkstraPoint> _openList;
         private HashSet<DijkstraPoint> _closedList;
         
-        public void InitMap(PathFinderMap map) {
+        public void InitMap(RectGridPassableMap map) {
             _map = map;
             _dijkstraMap = new DijkstraPoint[_map.Width, _map.Height];
             for (int x = 0; x < _map.Width; x++) {
@@ -48,7 +49,7 @@ namespace GridMapToolset.PathFinding {
                     return ReconstructPath(current);
                 }
 
-                foreach (var direction in PathFinderMap.Vector2DirectionDict.Keys) {
+                foreach (var direction in RectGridPassableMap.Direction8Dict.Values) {
                     Vector2Int nP = current.Pos + direction;
 
                     if (!_map.CanMoveTo(current.X, current.Y, direction)) {
