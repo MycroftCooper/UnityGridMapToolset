@@ -1,18 +1,19 @@
 using System;
 using System.Collections.Generic;
+using GridMapToolset.Util;
 using UnityEditor;
 using UnityEngine;
 using Unity2DGridMapToolset.Util;
 
-namespace GridMapToolset2D.PathFinding {
+namespace GridMapToolset.PathFinding {
     public class JPSPlus : IPathFinderAlgorithm {
         public PathFinderAlgorithms Algorithm => PathFinderAlgorithms.JPSPlus;
         public bool NeedBestSolution { get; set; }
         public HeuristicFunctionBase HeuristicFunction { get; set; }
-        private PathFinderMap _map;
+        private RectGridPassableMap _map;
         private JPSPlusPoint[,] _pointsMap;
         
-        public void InitMap(PathFinderMap map) {
+        public void InitMap(RectGridPassableMap map) {
             _map = map;
             PreprocessJumpMap();
             
@@ -51,7 +52,7 @@ namespace GridMapToolset2D.PathFinding {
                     }
                 } else {
                     for (int dirIndex = 0; dirIndex < 8; dirIndex++) {
-                        Vector2Int dir = PathFinderMap.Direction2VectorDict[(PathFinderMap.Directions)dirIndex];
+                        Vector2Int dir = RectGridPassableMap.Direction8Dict[(RectGridPassableMap.Directions)dirIndex];
                         int oldStep = point.JumpStep[dirIndex];
                         int newStep = CalculateStep(x, y, dir);
 
@@ -101,7 +102,7 @@ namespace GridMapToolset2D.PathFinding {
 
                     // 计算八个方向的JumpStep
                     for (int dirIndex = 0; dirIndex < 8; dirIndex++) {
-                        Vector2Int dir = PathFinderMap.Direction2VectorDict[(PathFinderMap.Directions)dirIndex];
+                        Vector2Int dir = RectGridPassableMap.Direction8Dict[(RectGridPassableMap.Directions)dirIndex];
                         point.JumpStep[dirIndex] = CalculateStep(x, y, dir);
                     }
                 }
@@ -218,7 +219,7 @@ namespace GridMapToolset2D.PathFinding {
             } 
 
             for (int dirIndex = 0; dirIndex < 8; dirIndex++) {
-                Vector2Int dir = PathFinderMap.Direction2VectorDict[(PathFinderMap.Directions)dirIndex];
+                Vector2Int dir = RectGridPassableMap.Direction8Dict[(RectGridPassableMap.Directions)dirIndex];
                 if(dir == -parentDir) continue;
                 
                 int step = current.JumpStep[dirIndex];
@@ -287,7 +288,7 @@ namespace GridMapToolset2D.PathFinding {
 
             JPSPlusPoint point = _pointsMap[targetPos.x, targetPos.y];
             for (int dirIndex = 0; dirIndex < 8; dirIndex++) {
-                Vector2Int dir = PathFinderMap.Direction2VectorDict[(PathFinderMap.Directions)dirIndex];
+                Vector2Int dir = RectGridPassableMap.Direction8Dict[(RectGridPassableMap.Directions)dirIndex];
                 Vector3 p = position + new Vector3(dir.x, dir.y, 0) * 0.2f;
                 Handles.Label(p, point.JumpStep[dirIndex].ToString(), _style);
             }

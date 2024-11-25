@@ -1,19 +1,20 @@
 using System;
 using System.Collections.Generic;
+using GridMapToolset.Util;
 using Unity2DGridMapToolset.Util;
 using UnityEngine;
 
-namespace GridMapToolset2D.PathFinding {
+namespace GridMapToolset.PathFinding {
     public class AStart : IPathFinderAlgorithm {
         public PathFinderAlgorithms Algorithm => PathFinderAlgorithms.AStar;
         public bool NeedBestSolution { get; set; }
         public HeuristicFunctionBase HeuristicFunction { get; set; }
-        private PathFinderMap _map;
+        private RectGridPassableMap _map;
         private AStartPoint[,] _aStartMap;
         private BucketPriorityQueue<AStartPoint> _openList;
         private HashSet<AStartPoint> _closedList;
         
-        public void InitMap(PathFinderMap map) {
+        public void InitMap(RectGridPassableMap map) {
             _map = map;
             _aStartMap = new AStartPoint[_map.Width, _map.Height];
             for (int x = 0; x < _map.Width; x++) {
@@ -50,7 +51,7 @@ namespace GridMapToolset2D.PathFinding {
                 }
 
                 // 遍历当前节点的相邻节点
-                foreach (var direction in PathFinderMap.Direction2VectorDict.Values) {
+                foreach (var direction in RectGridPassableMap.Direction8Dict.Values) {
                     Vector2Int nP = current.Pos + direction;
                     if (!_map.CanMoveTo(current.X, current.Y, direction)) {
                         continue;

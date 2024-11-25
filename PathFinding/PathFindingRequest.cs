@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity2DGridMapToolset.Util;
 using UnityEngine;
 
-namespace GridMapToolset2D.PathFinding {
+namespace GridMapToolset.PathFinding {
     public class PathFindingRequest {
         public readonly Vector2Int StartPos;
         public readonly Vector2Int EndPos;
@@ -33,6 +33,9 @@ namespace GridMapToolset2D.PathFinding {
         public PathFindingRequest(Vector2Int startPos, Vector2Int endPos, 
             PathFinderAlgorithms algorithm, bool needBestSolution, HeuristicTypes heuristicType, PathReprocesses reprocess,
             bool canUseCache = false, Action<PathFindingRequest> pathFoundHandler = null) {
+            if (startPos == endPos) {
+                throw new ArgumentException("Start position and end position cannot be the same.");
+            }
             StartPos = startPos;
             EndPos = endPos;
             Algorithm = algorithm;

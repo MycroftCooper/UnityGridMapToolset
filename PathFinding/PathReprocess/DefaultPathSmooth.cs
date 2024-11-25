@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
+using GridMapToolset.Util;
 using UnityEngine;
 
-namespace GridMapToolset2D.PathFinding {
+namespace GridMapToolset.PathFinding {
     public class DefaultPathSmooth : IPathReprocess {
         // 时间复杂度：O(n * d^2)
         public PathReprocesses PathReprocess => PathReprocesses.Default;
-        private PathFinderMap _map;
+        private RectGridPassableMap _map;
         
-        public List<Vector2Int> ReprocessPath(List<Vector2Int> path, PathFinderMap map) {
+        public List<Vector2Int> ReprocessPath(List<Vector2Int> path, RectGridPassableMap map) {
             _map = map;
             var result = new List<Vector2Int>(path);
             SmoothPath(result);

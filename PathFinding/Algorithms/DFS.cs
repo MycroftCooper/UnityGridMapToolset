@@ -1,13 +1,14 @@
 using System.Collections.Generic;
+using GridMapToolset.Util;
 using UnityEngine;
 
-namespace GridMapToolset2D.PathFinding {
+namespace GridMapToolset.PathFinding {
     public class DFS : IPathFinderAlgorithm {
         public PathFinderAlgorithms Algorithm => PathFinderAlgorithms.DFS;
         public bool NeedBestSolution { get; set; }
         public HeuristicFunctionBase HeuristicFunction { get; set; }
-        private PathFinderMap _map;
-        public void InitMap(PathFinderMap map) {
+        private RectGridPassableMap _map;
+        public void InitMap(RectGridPassableMap map) {
             _map = map;
         }
         
@@ -26,7 +27,7 @@ namespace GridMapToolset2D.PathFinding {
                 var (currentPosition, currentPath) = _stack.Pop();
 
                 // 探索所有方向
-                foreach (var direction in PathFinderMap.Direction2VectorDict.Values) {
+                foreach (var direction in RectGridPassableMap.Direction8Dict.Values) {
                     Vector2Int neighbor = currentPosition + direction;
 
                     if (!_map.CanMoveTo(currentPosition.x, currentPosition.y, direction)) {

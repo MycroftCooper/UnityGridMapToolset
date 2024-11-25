@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 
-namespace MapSystem {
+namespace GridMapToolset.Map {
     /// <summary>
     /// 网格物体大小
     /// </summary>
